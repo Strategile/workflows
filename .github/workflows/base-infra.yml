@@ -69,5 +69,6 @@ jobs:
         echo "${{ steps.tfapply.outputs.landing_pg_deployment_token }}" | gh secret set LANDING_PG_DEPLOY_TOKEN_${{ inputs.ENVIRONMENT }}
         echo "${{ steps.tfapply.outputs.blazor_web_deployment_token }}" | gh secret set BLAZOR_WEB_DEPLOY_TOKEN_${{ inputs.ENVIRONMENT }}
         echo "${{ steps.tfapply.outputs.blazor_app_deployment_token }}" | gh secret set BLAZOR_APP_DEPLOY_TOKEN_${{ inputs.ENVIRONMENT }}
+        echo "${{ steps.tfapply.outputs.azfunc_api_deployment_token }}" | gh secret set FUNCTION_API_DEPLOY_TOKEN_${{ inputs.ENVIRONMENT }}
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
