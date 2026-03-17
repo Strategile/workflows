@@ -1,0 +1,70 @@
+name: Base Azure Static Web App
+
+
+on:
+  workflow_call:
+    inputs:
+      APP_LOCATION:
+        required: true
+        type: string
+      API_LOCATION:
+        required: true
+        type: string
+      APP_ARTIFACT:
+        required: true
+        type: string
+      APP_ENVIRONMENT:
+        required: true
+        type: string
+      IncludeFileToReplace:
+        required: true
+        type: string
+    secrets:
+      PUBLISH_TOKEN:
+        required: true
+
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Find '#{BaseAddressUrl}' in '${{ inputs.APP_LOCATION }}/${{ inputs.IncludeFileToReplace }}' and Replace to '${{ inputs.API_LOCATION }}'
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "#{BaseAddressUrl}"
+          replace: ${{ inputs.API_LOCATION }}
+          include: ${{ inputs.APP_LOCATION }}/${{ inputs.IncludeFileToReplace }}
+          regex: false
+
+      - name: Find '#{CACHE_VERSION}' in '${{ inputs.APP_LOCATION }}/wwwroot/*.*' and Replace to '${{ github.run_id }}'
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "#{CACHE_VERSION}"
+          replace: ${{ github.run_id }}
+          include: ${{ inputs.APP_LOCATION }}/wwwroot/*.*
+          regex: false
+
+      - name: Find '#{APPENV}' in '${{ inputs.APP_LOCATION }}/wwwroot/manifest.webmanifest' and Replace to '${{ inputs.APP_ENVIRONMENT }}'
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "#{APPENV}"
+          replace: ${{ inputs.APP_ENVIRONMENT }}
+          include: ${{ inputs.APP_LOCATION }}/wwwroot/manifest.webmanifest
+          regex: false
+
+      - name: Build And Deploy Blazor
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: "upload"
+          azure_static_web_apps_api_token: ${{ secrets.PUBLISH_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          app_location: ${{ inputs.APP_LOCATION }}
+          app_artifact_location: ${{ inputs.APP_ARTIFACT }}
+          #api_location: ${{ inputs.API_LOCATION }}

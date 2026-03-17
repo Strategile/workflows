@@ -1,0 +1,60 @@
+name: Base Azure Function Web Api
+
+
+on:
+  workflow_call:
+    inputs:
+      WORKING_DIRECTORY:
+        required: true
+        type: string
+      AZURE_FUNCTIONAPP_PATH:
+        required: true
+        type: string
+      AZURE_FUNCTIONAPP_NAME:
+        required: true
+        type: string
+      AZURE_FUNCTIONAPP_SLOT:
+        required: true
+        type: string
+      CONFIGURATION:
+        required: true
+        type: string
+      DOTNET_VERSION:
+        required: true
+        type: string
+    secrets:
+      PUBLISH_PROFILE:
+        required: true
+
+
+jobs:
+  build-and-deploy:
+    name: Build And Deploy
+    runs-on: ubuntu-latest
+      
+    steps:
+      - name: Checkout GitHub Action
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup .NET Core ${{ inputs.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ inputs.DOTNET_VERSION }}
+
+      - name: Restore ${{ inputs.WORKING_DIRECTORY }}
+        run: dotnet restore "${{ inputs.WORKING_DIRECTORY }}"
+
+      - name: Build And Publish ${{ inputs.WORKING_DIRECTORY }} / ${{ inputs.CONFIGURATION }} in ${{ inputs.AZURE_FUNCTIONAPP_PATH }}
+        run: dotnet build "${{ inputs.WORKING_DIRECTORY }}" --configuration ${{ inputs.CONFIGURATION }} --output ${{ inputs.AZURE_FUNCTIONAPP_PATH }}
+
+      - name: Deploy to Azure Function App ${{ inputs.AZURE_FUNCTIONAPP_NAME }} @ ${{ inputs.AZURE_FUNCTIONAPP_SLOT }} from ${{ inputs.AZURE_FUNCTIONAPP_PATH }}
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: ${{ inputs.AZURE_FUNCTIONAPP_NAME }}
+          slot-name: ${{ inputs.AZURE_FUNCTIONAPP_SLOT }}
+          package: ${{ inputs.AZURE_FUNCTIONAPP_PATH }}
+          publish-profile: ${{ secrets.PUBLISH_PROFILE }}          
+          sku: 'flexconsumption'
