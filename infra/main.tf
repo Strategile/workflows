@@ -161,7 +161,6 @@ resource "azurerm_function_app_flex_consumption" "main" {
   }
 
   app_settings = {
-    "WEBSITE_RUN_FROM_PACKAGE"              = "1"
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.main.connection_string
   }
 
