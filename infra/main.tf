@@ -45,7 +45,7 @@ locals {
   prefix            = "${local.project}-${local.env}"
   resource_group    = "RG-${local.prefix}"
   landing_page      = "${local.prefix}-landing"
-  blazor_web_app    = "${local.prefix}-web-app"
+  blazor_webapp     = "${local.prefix}-web-app"
   storage_account   = lower(replace(local.prefix, "-", ""))
   storage_container = lower(local.prefix)
   log_analytics     = "${local.prefix}"
@@ -73,8 +73,8 @@ resource "azurerm_static_web_app" "landing_page" {
 
 
 
-resource "azurerm_static_web_app" "blazor_web_app" {
-  name                       = local.blazor_web_app
+resource "azurerm_static_web_app" "blazor_webapp" {
+  name                       = local.blazor_webapp
   resource_group_name        = azurerm_resource_group.main.name
   location                   = local.location2
   sku_tier                   = "Free"
@@ -174,8 +174,8 @@ output "landing_page_deployment_token" {
 
 
 
-output "blazor_web_app_deployment_token" {
-  value     = azurerm_static_web_app.blazor_web_app.api_key
-  sensitive = true
+output "blazor_webapp_deployment_token" {
+  value     = azurerm_static_web_app.blazor_webapp.api_key
+  sensitive = false
 }
 
