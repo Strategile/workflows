@@ -67,12 +67,16 @@ jobs:
       run: terraform plan -out main.tfplan -var="project=${{ inputs.PROJECT }}" --var="env=${{ inputs.ENVIRONMENT }}"
 
     - name: Terraform Apply (${{ inputs.ENVIRONMENT }})
-      id: tfapply
+      working-directory: infra
+      run: terraform apply -auto-approve -input=false main.tfplan
+
+    - name: Terraform Outputs (${{ inputs.ENVIRONMENT }})
       working-directory: infra
       run: |
-        terraform apply -auto-approve -input=false main.tfplan
-        echo "landing_page_deployment_token=$(terraform output -raw landing_page_deployment_token)" >> $GITHUB_OUTPUT
-        echo "blazor_webapp_deployment_token=$(terraform output -raw blazor_webapp_deployment_token)" >> $GITHUB_OUTPUT
+        V1=$(terraform output -raw landing_page_deployment_token)
+        V2=$(terraform output -raw blazor_webapp_deployment_token)
+        echo "landing_page_deployment_token=$V1" >> $GITHUB_OUTPUT
+        echo "blazor_webapp_deployment_token=$V2" >> $GITHUB_OUTPUT
     
 #    - name: Save GitHub Secrets (${{ inputs.ENVIRONMENT }})
 #      run: |
@@ -96,4 +100,4 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
       VALUE1: ${{ needs.terraform.outputs.landing_page_deployment_token }}
       VALUE2: ${{ needs.terraform.outputs.blazor_webapp_deployment_token }}
-      VALUE3: ""
+      VALUE3: "Secret"
