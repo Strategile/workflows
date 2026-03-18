@@ -79,10 +79,10 @@ resource "azurerm_static_web_app" "blazor_webapp" {
   location                   = local.location2
   sku_tier                   = "Free"
   sku_size                   = "Free"
-  repository_branch          = "main"
 
   lifecycle {
     ignore_changes = [
+      repository_branch,
       repository_url
     ]
   }
