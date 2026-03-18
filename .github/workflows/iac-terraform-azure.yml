@@ -73,19 +73,23 @@ jobs:
     - name: Save GitHub Secrets (${{ inputs.ENVIRONMENT }}) from Terraform Outputs (${{ inputs.ENVIRONMENT }})
       working-directory: infra
       run: |
-        SECRET_NAME="${{ inputs.ENVIRONMENT }}_FUNCTION_API_DEPLOY_TOKEN"
-        SECRET1=$(terraform output -raw landing_page_deployment_token)
-        SECRET2=$(terraform output -raw blazor_webapp_deployment_token)
-        SECRET3="ValorPadrao"
+        SECRET_NAME1="${{ inputs.ENVIRONMENT }}_LANDING_PAGE_DEPLOY_TOKEN"
+        SECRET_VALUE1=$(terraform output -raw landing_page_deployment_token)
 
-        gh secret set ${{ inputs.ENVIRONMENT }}_LANDING_PAGE_DEPLOY_TOKEN  --repo ${{ github.repository }} --body $SECRET1
-        gh secret set ${{ inputs.ENVIRONMENT }}_BLAZOR_WEBAPP_DEPLOY_TOKEN --repo ${{ github.repository }} --body $SECRET2
+        SECRET_NAME2="${{ inputs.ENVIRONMENT }}_BLAZOR_WEBAPP_DEPLOY_TOKEN"
+        SECRET_VALUE2=$(terraform output -raw blazor_webapp_deployment_token)
 
-        if gh secret list --limit 1000 | awk '{print $1}' | grep -Fxq "$SECRET_NAME"; then
-          echo "Secret $SECRET_NAME já existe. Nada a fazer 👍"
+        SECRET_NAME3="${{ inputs.ENVIRONMENT }}_FUNCTION_API_DEPLOY_TOKEN"
+        SECRET_VALUE3="Secret precisa ser configurado manualmente para consumo flex"
+
+        gh secret set $SECRET_NAME1 --repo ${{ github.repository }} --body $SECRET_VALUE1
+        gh secret set $SECRET_NAME2 --repo ${{ github.repository }} --body $SECRET_VALUE2
+
+        if gh secret list | awk '{print $1}' | grep -Fxq "$SECRET_NAME3"; then
+          echo "Secret $SECRET_NAME3 já existe. Nada a fazer 👍"
         else
-          echo "Criando secret $SECRET_NAME..."
-          gh secret set $SECRET_NAME --repo ${{ github.repository }} --body $SECRET3
+          echo "Criando secret $SECRET_NAME3..."
+          gh secret set $SECRET_NAME3 --repo ${{ github.repository }} --body $SECRET_VALUE3
         fi
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
