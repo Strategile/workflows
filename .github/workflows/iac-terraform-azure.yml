@@ -25,6 +25,7 @@ on:
 env:
   SECRET1: SECRET1
   SECRET2: SECRET2
+  SECRET3: SECRET3
 
 
 jobs:
@@ -98,8 +99,7 @@ jobs:
         fi
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        SECRET1: ${{ steps.tfout.outputs.SECRET_landing_page_deployment_token }}
-        SECRET2: ${{ steps.tfout.outputs.SECRET_blazor_webapp_deployment_token }}
+
 
 
   
