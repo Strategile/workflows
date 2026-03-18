@@ -22,6 +22,11 @@ on:
         required: true
 
 
+env:
+  SECRET1: SECRET1
+  SECRET2: SECRET2
+
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -74,19 +79,17 @@ jobs:
       id: tfout
       working-directory: infra
       run: |
-        SECRET1=$(terraform output -raw landing_page_deployment_token)
-        SECRET2=$(terraform output -raw blazor_webapp_deployment_token)
-        echo "SECRET_landing_page_deployment_token=$SECRET1" >> $GITHUB_OUTPUT
-        echo "SECRET_blazor_webapp_deployment_token=$SECRET2" >> $GITHUB_OUTPUT
-    
+        SECRET1=$(terraform output -raw landing_page_deployment_token) >> $GITHUB_ENV
+        SECRET2=$(terraform output -raw blazor_webapp_deployment_token) >> $GITHUB_ENV
+        SECRET3="ValorPadrao" >> $GITHUB_ENV
+  
     - name: Save GitHub Secrets (${{ inputs.ENVIRONMENT }})
       run: |
         gh secret set ${{ inputs.ENVIRONMENT }}_LANDING_PAGE_DEPLOY_TOKEN  --repo ${{ github.repository }} --body $SECRET1
         gh secret set ${{ inputs.ENVIRONMENT }}_BLAZOR_WEBAPP_DEPLOY_TOKEN --repo ${{ github.repository }} --body $SECRET2
         
         SECRET_NAME="${{ inputs.ENVIRONMENT }}_FUNCTION_API_DEPLOY_TOKEN"
-        $SECRET3="valor_padrao_aqui"
-        
+
         if gh secret list --limit 1000 | awk '{print $1}' | grep -Fxq "$SECRET_NAME"; then
           echo "Secret $SECRET_NAME já existe. Nada a fazer 👍"
         else
