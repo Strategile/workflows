@@ -190,9 +190,9 @@ resource "azurerm_function_app_flex_consumption" "main" {
   }
 
   connection_string {
-    "type"  = "SQLServer"
-    "name"  = "Default"
-    "value" = var.DefaultConnectionString
+    type  = "SQLServer"
+    name  = "Default"
+    value = var.DefaultConnectionString
   }
 
   lifecycle {
