@@ -81,12 +81,12 @@ jobs:
     - name: Terraform Apply (${{ inputs.ENVIRONMENT }})
       working-directory: infra
       run: terraform apply -auto-approve -input=false main.tfplan
-      env:
-        TF_VAR_project: ${{ inputs.PROJECT }}
-        TF_VAR_env: ${{ inputs.ENVIRONMENT }}
-        TF_VAR_SecurityInfo_AppGuid: ${{ secrets.SECURITYINFO_APPGUID }}
-        TF_VAR_SecurityInfo_AuthKey: ${{ secrets.SECURITYINFO_AUTHKEY }}
-        TF_VAR_DefaultConnectionString: ${{ secrets.DEFAULT_CONNECTION_STRING }}
+#      env:
+#        TF_VAR_project: ${{ inputs.PROJECT }}
+#        TF_VAR_env: ${{ inputs.ENVIRONMENT }}
+#        TF_VAR_SecurityInfo_AppGuid: ${{ secrets.SECURITYINFO_APPGUID }}
+#        TF_VAR_SecurityInfo_AuthKey: ${{ secrets.SECURITYINFO_AUTHKEY }}
+#        TF_VAR_DefaultConnectionString: ${{ secrets.DEFAULT_CONNECTION_STRING }}
 
     - name: Save GitHub Secrets (${{ inputs.ENVIRONMENT }}) from Terraform Outputs (${{ inputs.ENVIRONMENT }})
       working-directory: infra
