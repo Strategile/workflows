@@ -32,13 +32,27 @@ variable "env" {
   description = "Ambiente (HMG ou PRD)"
 }
 
+variable "SecurityInfo_AppGuid" {
+  type        = string
+  description = "SecurityInfo_AppGuid"
+}
+
+variable "SecurityInfo_AuthKey" {
+  type        = string
+  description = "SecurityInfo_AuthKey"
+}
+
+variable "DefaultConnectionString" {
+  type        = string
+  description = "DefaultConnectionString"
+}
+
 
 
 locals {
   location1         = "East US"
   location2         = "East US 2"
 
-  workspace         = terraform.workspace
   project           = var.project
   env               = var.env
 
@@ -169,6 +183,14 @@ resource "azurerm_function_app_flex_consumption" "main" {
 
   app_settings = {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.main.connection_string
+    "SecurityInfo_AppGuid" = var.SecurityInfo_AppGuid
+    "SecurityInfo_AuthKey" = var.SecurityInfo_AuthKey
+    "SecurityInfo_Refresh" = "00:30:00"
+    "SecurityInfo_TimeOut" = "00:30:00"
+  }
+
+  connection_string {
+    "Default" = var.DefaultConnectionString
   }
 
   lifecycle {
