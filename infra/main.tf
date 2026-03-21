@@ -68,7 +68,7 @@ locals {
   log_analytics     = "${local.prefix}"
   app_insights      = "${local.prefix}"
   service_plan      = "${local.prefix}"
-  function_app      = "${local.prefix}"
+  function_app      = "${local.prefix}1"
 #  lp_custom_domain  = var.env == "HMG" ? "lp-hmg.${lower(local.prefix)}.com.br" : "${lower(local.prefix)}.com.br"
 #  app_custom_domain = var.env == "HMG" ? "app-hmg.${lower(local.prefix)}.com.br" : "app.${lower(local.prefix)}.com.br"
 }
