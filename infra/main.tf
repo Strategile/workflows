@@ -69,6 +69,7 @@ locals {
   app_insights      = "${local.prefix}"
   service_plan      = "${local.prefix}"
   function_app      = "${local.prefix}"
+  custom_domain     = "app-${lower(local.env)}.${lower(local.prefix)}.com.br"
 }
 
 
@@ -110,6 +111,14 @@ resource "azurerm_static_web_app" "blazor_webapp" {
       repository_url
     ]
   }
+}
+
+
+
+resource "azurerm_static_site_custom_domain" "example" {
+  static_site_id             = azurerm_static_web_app.blazor_webapp.id
+  domain_name                = ${local.custom_domain}
+  validation_type            = "cname-delegation"
 }
 
 
