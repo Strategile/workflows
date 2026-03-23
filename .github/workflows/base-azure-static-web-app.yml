@@ -7,7 +7,10 @@ on:
       PROJECT:
         required: true
         type: string
-      ENV:
+      APPENV:
+        required: true
+        type: string
+      TYPE:
         required: true
         type: string
       APP_LOCATION:
@@ -31,7 +34,11 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: Build and Deploy 
+
+    env:
+      RESOURCE_NAME: "${{ inputs.PROJECT }}-${{ inputs.APPENV }}-${{ inputs.TYPE }}"
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -53,11 +60,11 @@ jobs:
           include: ${{ inputs.APP_LOCATION }}/wwwroot/*.*
           regex: false
 
-      - name: Find '#{APPENV}' in '${{ inputs.APP_LOCATION }}/wwwroot/manifest.webmanifest' and Replace to '${{ inputs.ENV }}'
+      - name: Find '#{APPENV}' in '${{ inputs.APP_LOCATION }}/wwwroot/manifest.webmanifest' and Replace to '${{ inputs.APPENV }}'
         uses: jacobtomlinson/gha-find-replace@v3
         with:
           find: "#{APPENV}"
-          replace: ${{ inputs.ENV }}
+          replace: ${{ inputs.APPENV }}
           include: ${{ inputs.APP_LOCATION }}/wwwroot/manifest.webmanifest
           regex: false
 
