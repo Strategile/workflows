@@ -55,9 +55,9 @@ on:
 
 
 jobs:
-  build-and-deploy:
+  publish:
     runs-on: ubuntu-latest
-    name: Build and Deploy 
+    name: Publish
 
     env:
       RG_NAME: "RG-${{ inputs.Project }}-${{ inputs.AppEnv }}"
