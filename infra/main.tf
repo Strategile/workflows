@@ -22,7 +22,7 @@ provider "azurerm" {
 
 
 
-variable "project" {
+variable "Project" {
   type        = string
   description = "Nome base do projeto"
 }
@@ -56,10 +56,10 @@ locals {
   location1         = "East US"
   location2         = "East US 2"
 
-  project           = var.project
+  Project           = var.Project
   AppEnv            = var.AppEnv
 
-  prefix            = "${local.project}-${local.AppEnv}"
+  prefix            = "${local.Project}-${local.AppEnv}"
   resource_group    = "RG-${local.prefix}"
   landing_page      = "${local.prefix}-landing"
   blazor_webapp     = "${local.prefix}-webapp"
