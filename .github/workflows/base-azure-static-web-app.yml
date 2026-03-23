@@ -39,7 +39,7 @@ jobs:
       RESOURCE_NAME: "${{ inputs.Project }}-${{ inputs.AppEnv }}-${{ inputs.AppType }}"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
