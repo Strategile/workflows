@@ -1,4 +1,4 @@
-name: Base Azure Function Web Api
+name: Azure Function Web Api
 
 
 on:
@@ -19,7 +19,7 @@ on:
       OutPath:
         required: true
         type: string
-        description: "Pasta de saída Function (o caminho onde os binários são gerados. Pode ser um caminho relativo)"
+        description: "Pasta de saída (local onde os binários são gerados. Pode ser um caminho relativo)"
       DotNetVersion:
         required: false
         type: string
