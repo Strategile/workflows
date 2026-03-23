@@ -27,7 +27,7 @@ variable "project" {
   description = "Nome base do projeto"
 }
 
-variable "env" {
+variable "AppEnv" {
   type        = string
   description = "Ambiente (HMG ou PRD)"
 }
@@ -57,9 +57,9 @@ locals {
   location2         = "East US 2"
 
   project           = var.project
-  env               = var.env
+  AppEnv            = var.AppEnv
 
-  prefix            = "${local.project}-${local.env}"
+  prefix            = "${local.project}-${local.AppEnv}"
   resource_group    = "RG-${local.prefix}"
   landing_page      = "${local.prefix}-landing"
   blazor_webapp     = "${local.prefix}-webapp"
@@ -69,8 +69,6 @@ locals {
   app_insights      = "${local.prefix}"
   service_plan      = "${local.prefix}"
   function_app      = "${local.prefix}"
-#  lp_custom_domain  = var.env == "HMG" ? "lp-hmg.${lower(local.prefix)}.com.br" : "${lower(local.prefix)}.com.br"
-#  app_custom_domain = var.env == "HMG" ? "app-hmg.${lower(local.prefix)}.com.br" : "app.${lower(local.prefix)}.com.br"
 }
 
 
