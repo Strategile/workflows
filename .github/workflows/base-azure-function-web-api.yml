@@ -52,7 +52,7 @@ jobs:
           submodules: true
 
       - name: Setup .NET Core ${{ inputs.DotNetVersion }}
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ inputs.DotNetVersion }}
 
