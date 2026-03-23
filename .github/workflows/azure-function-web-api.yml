@@ -63,9 +63,9 @@ on:
 
 
 jobs:
-  build-and-deploy:
-    name: Build And Deploy
+  publish:
     runs-on: ubuntu-latest
+    name: Publish
 
     env:
       RESOURCE_NAME: "${{ inputs.Project }}-${{ inputs.AppEnv }}"
