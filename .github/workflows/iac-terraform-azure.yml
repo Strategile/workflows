@@ -6,22 +6,43 @@ on:
       Project:
         required: true
         type: string
+        description: "Nome do Projeto que está sendo publicado"
       AppEnv:
         required: true
         type: string
+        description: "Ambiente que será feito a publicação (DEV, HMG, STG, PRD, etc)"
       ConnectionStringType:
         required: false
         type: string
         default: "SQLServer"
+        description: "Tipo de Banco de dados que a aplicação usará (Necessário para a criação da chave de connectionString no Azure)"
       ConnectionStringName:
         required: false
         type: string
         default: "Default"
+        description: "Nome da Chave de ConnectionString (Necessário para a criação da chave de connectionString no Azure)"
     secrets:
-      AZURE_CREDENTIALS:
-        required: true
       ConnectionStringValue:
         required: true
+      AZURE_CREDENTIALS:
+        required: true
+        description: |
+          Json contendo as credenciais do Azure. para obter essa credencial, rode no azure o comando abaixo:
+          az ad sp create-for-rbac --name "github-actions" --role contributor --scopes /subscriptions/#subscriptionId#
+          O Azure vai retornar um Json semelhante ao abaixo
+          {
+            "appId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeffffff",
+            "displayName": "github-actions",
+            "password": "#Password+Secreta*Gerada+Automaticamente!",
+            "tenant": "ffffffff-eeee-dddd-cccc-bbbbbbaaaaaa"
+          }
+          Você precisa converter o Json retornado acima em algo conforme o json abaixo:
+          {
+            "clientId": "appId",
+            "clientSecret": "password",
+            "subscriptionId": "#subscriptionId#",
+            "tenantId": "tenant"
+          }
 
 
 jobs:
