@@ -37,6 +37,7 @@ jobs:
     name: Build and Deploy 
 
     env:
+      RG_NAME: "RG-${{ inputs.PROJECT }}-${{ inputs.APPENV }}"
       RESOURCE_NAME: "${{ inputs.PROJECT }}-${{ inputs.APPENV }}-${{ inputs.TYPE }}"
 
     steps:
@@ -67,12 +68,17 @@ jobs:
           replace: ${{ inputs.APPENV }}
           include: ${{ inputs.APP_LOCATION }}/wwwroot/manifest.webmanifest
           regex: false
-
+      
+      - name: Get SWA token
+        run: |
+          TOKEN=$(az staticwebapp secrets list --name $RESOURCE_NAME --resource-group $RG_NAME --query "properties.apiKey" -o tsv)     
+          echo "PUBLISH_TOKEN=$TOKEN" >> $GITHUB_ENV
+        
       - name: Build And Deploy Blazor
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "upload"
-          azure_static_web_apps_api_token: ${{ secrets.PUBLISH_TOKEN }}
+          azure_static_web_apps_api_token: ${{ env.PUBLISH_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           app_location: ${{ inputs.APP_LOCATION }}
           app_artifact_location: ${{ inputs.APP_ARTIFACT }}
