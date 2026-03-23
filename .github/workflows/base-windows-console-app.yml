@@ -3,19 +3,26 @@ name: Base Windows Console App
 on:
   workflow_call:
     inputs:
-      WORKING_DIRECTORY:
+      Project:
         required: true
         type: string
-      OUTPUT_PATH:
+      AppEnv:
         required: true
         type: string
-      CONFIGURATION:
+      RootPath:
         required: true
         type: string
-      DOTNET_VERSION:
+      OutPath:
         required: true
         type: string
-      FTP_PATH:
+      Configuration:
+        required: true
+        type: string
+      DotNetVersion:
+        required: true
+        type: string
+        default: "10.0.x"
+      FtpPath:
         required: true
         type: string
     secrets:
@@ -34,18 +41,18 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup .NET Core ${{ inputs.DOTNET_VERSION }}
+      - name: Setup .NET Core ${{ inputs.DotNetVersion }}
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: ${{ inputs.DOTNET_VERSION }}
+          dotnet-version: ${{ inputs.DotNetVersion }}
 
-      - name: Build And Publish ${{ inputs.WORKING_DIRECTORY }} / ${{ inputs.CONFIGURATION }} in ${{ inputs.OUTPUT_PATH }}
+      - name: Build And Publish ${{ inputs.RootPath }} / ${{ inputs.Configuration }} in ${{ inputs.OutPath }}
         shell: powershell
         run: |
-          dotnet publish "${{ inputs.WORKING_DIRECTORY }}" --configuration ${{ inputs.CONFIGURATION }} --output ${{ inputs.OUTPUT_PATH }}
-          Del ${{ inputs.OUTPUT_PATH }}\appsettings.json
+          dotnet publish "${{ inputs.RootPath }}" --configuration ${{ inputs.Configuration }} --output ${{ inputs.OutPath }}
+          Del ${{ inputs.OutPath }}\appsettings.json
 
-      - name: Creating Package upload\Strategile.SyncDataApp.zip
+      - name: Creating Package upload\${{ inputs.Project }}.SyncDataApp.zip
         shell: powershell
         run: |
           MkDir upload\
@@ -55,16 +62,16 @@ jobs:
           Copy src\SyncDataApp\Properties\Config\Executar.bat    output\
           Copy src\SyncDataApp\Properties\Config\RunSetup.bat    output\Config\
           Copy src\SyncDataApp\Properties\Config\RunUpdate.bat   output\Config\
-          Copy src\SyncDataApp\Properties\Config\Strategile*.xml output\Config\
+          Copy src\SyncDataApp\Properties\Config\${{ inputs.Project }}*.xml output\Config\
           Copy src\SyncDataApp\Properties\Config\template*.json  output\Config\
 
           Compress-Archive -Force -DestinationPath upload\Config.zip                 -Path output\Config\ , output\*.*
-          Compress-Archive -Force -DestinationPath upload\Strategile.SyncDataApp.zip -Path ${{ inputs.OUTPUT_PATH }}
+          Compress-Archive -Force -DestinationPath upload\${{ inputs.Project }}.SyncDataApp.zip -Path ${{ inputs.OutPath }}
     
       - name: Deploy Release to FTP Server
         shell: powershell
         run: |
           . .\upload\upload-to-ftp.ps1
-          Ftp-Deploy "${{ secrets.FTP_PWD }}" "${{ inputs.FTP_PATH }}" "Config.zip"
-          Ftp-Deploy "${{ secrets.FTP_PWD }}" "${{ inputs.FTP_PATH }}" "Strategile.SyncDataApp.zip"
+          Ftp-Deploy "${{ secrets.FTP_PWD }}" "${{ inputs.FtpPath }}" "Config.zip"
+          Ftp-Deploy "${{ secrets.FTP_PWD }}" "${{ inputs.FtpPath }}" "${{ inputs.Project }}.SyncDataApp.zip"
 
