@@ -82,7 +82,6 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "upload"
-          azure_static_web_apps_api_token: ${{ steps.get-token.outputs.token }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          azure_static_web_apps_api_token: ${{ steps.get-token.outputs.PUBLISH_TOKEN }}
           app_location: ${{ inputs.APP_LOCATION }}
           app_artifact_location: ${{ inputs.APP_ARTIFACT }}
