@@ -20,8 +20,6 @@ on:
         required: true
       API_CONNECTION_STRING_VALUE:
         required: true
-      GH_TOKEN:
-        required: true
 
 
 jobs:
@@ -71,21 +69,4 @@ jobs:
       working-directory: infra
       run: terraform apply -auto-approve -input=false main.tfplan
 
-    - name: Save GitHub Secrets (${{ inputs.APPENV }}) from Terraform Outputs (${{ inputs.APPENV }})
-      working-directory: infra
-      run: |
-        SECRET_NAME1="${{ inputs.APPENV }}_LANDING_PAGE_DEPLOY_TOKEN"
-        SECRET_VALUE1=$(terraform output -raw landing_page_deployment_token)
-
-        SECRET_NAME2="${{ inputs.APPENV }}_BLAZOR_WEBAPP_DEPLOY_TOKEN"
-        SECRET_VALUE2=$(terraform output -raw blazor_webapp_deployment_token)
-
-        gh secret set $SECRET_NAME1 --repo ${{ github.repository }} --body $SECRET_VALUE1
-        gh secret set $SECRET_NAME2 --repo ${{ github.repository }} --body $SECRET_VALUE2
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-
-
-  
 
