@@ -7,27 +7,52 @@ on:
       Project:
         required: true
         type: string
+        description: "Nome do Projeto que está sendo publicado"
       AppEnv:
         required: true
         type: string
+        description: "Ambiente que será feito a publicação (DEV, HMG, STG, PRD, etc)"
       AppType:
         required: true
         type: string
+        description: "Indica o tipo de Static Web App (se é 'landing' page, ou 'webapp')"
       RootPath:
         required: true
         type: string
+        description: "Pasta Raiz do projeto de Static Web App (o caminho pode ser um path relativo do repositório, i.e., src/BlazorApp/)"
       OutPath:
         required: true
         type: string
+        description: "Pasta de saída do Static Web App (o caminho onde os binários são gerados. Pode ser um caminho relativo)"
       ApiUrl:
         required: true
         type: string
+        description: "Endereço da Api (full url: https://api.servidor.com.br)"
       IncludeFileToReplace:
         required: true
         type: string
+        description: "Indica os arquivos que serão submetidos para alterar o '#{BaseAddressUrl}'"
     secrets:
       AZURE_CREDENTIALS:
         required: true
+        description: |
+          Json contendo as credenciais do Azure. para obter essa credencial, rode no azure o comando abaixo:
+          az ad sp create-for-rbac --name "github-actions" --role contributor --scopes /subscriptions/#subscriptionId#
+          O Azure vai retornar um Json semelhante ao abaixo
+          {
+            "appId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeffffff",
+            "displayName": "github-actions",
+            "password": "#Password+Secreta*Gerada+Automaticamente!",
+            "tenant": "ffffffff-eeee-dddd-cccc-bbbbbbaaaaaa"
+          }
+          Você precisa converter o Json retornado acima em algo conforme o json abaixo:
+          {
+            "clientId": "appId",
+            "clientSecret": "password",
+            "subscriptionId": "#subscriptionId#",
+            "tenantId": "tenant"
+          }
+
 
 jobs:
   build-and-deploy:
