@@ -3,22 +3,24 @@ name: Base Infra
 on:
   workflow_call:
     inputs:
-      PROJECT:
+      Project:
         required: true
         type: string
-      APPENV:
+      AppEnv:
         required: true
         type: string
-      API_CONNECTION_STRING_TYPE:
-        required: true
+      ConnectionStringType:
+        required: false
         type: string
-      API_CONNECTION_STRING_NAME:
-        required: true
+        default: "SQLServer"
+      ConnectionStringName:
+        required: false
         type: string
+        default: "Default"
     secrets:
       AZURE_CREDENTIALS:
         required: true
-      API_CONNECTION_STRING_VALUE:
+      ConnectionStringValue:
         required: true
 
 
@@ -41,31 +43,31 @@ jobs:
 
     - uses: hashicorp/setup-terraform@v4
 
-    - name: Terraform Init Upgrade (${{ inputs.APPENV }})
+    - name: Terraform Init Upgrade (${{ inputs.AppEnv }})
       working-directory: infra
       run: terraform init -upgrade
 
-    - name: Terraform Workspace (${{ inputs.PROJECT }}-${{ inputs.APPENV }})
+    - name: Terraform Workspace (${{ inputs.Project }}-${{ inputs.AppEnv }})
       working-directory: infra
       run: terraform workspace select -or-create $WORKSPACE
       env:
-         WORKSPACE: "${{ inputs.PROJECT }}-${{ inputs.APPENV }}"
+         WORKSPACE: "${{ inputs.Project }}-${{ inputs.AppEnv }}"
 
-    - name: Terraform Validate (${{ inputs.APPENV }})
+    - name: Terraform Validate (${{ inputs.AppEnv }})
       working-directory: infra
       run: terraform validate
 
-    - name: Terraform Plan (${{ inputs.APPENV }})
+    - name: Terraform Plan (${{ inputs.AppEnv }})
       working-directory: infra
       run: terraform plan -out main.tfplan
       env:
-        TF_VAR_project: ${{ inputs.PROJECT }}
-        TF_VAR_env: ${{ inputs.APPENV }}
-        TF_VAR_ConnectionStringType: ${{ inputs.API_CONNECTION_STRING_TYPE }}
-        TF_VAR_ConnectionStringName: ${{ inputs.API_CONNECTION_STRING_NAME }}
-        TF_VAR_ConnectionStringValue: ${{ secrets.API_CONNECTION_STRING_VALUE }}
+        TF_VAR_Project: ${{ inputs.Project }}
+        TF_VAR_env: ${{ inputs.AppEnv }}
+        TF_VAR_ConnectionStringType: ${{ inputs.ConnectionStringType }}
+        TF_VAR_ConnectionStringName: ${{ inputs.ConnectionStringName }}
+        TF_VAR_ConnectionStringValue: ${{ secrets.ConnectionStringValue }}
 
-    - name: Terraform Apply (${{ inputs.APPENV }})
+    - name: Terraform Apply (${{ inputs.AppEnv }})
       working-directory: infra
       run: terraform apply -auto-approve -input=false main.tfplan
 
