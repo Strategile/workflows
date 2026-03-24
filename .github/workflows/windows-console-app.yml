@@ -37,23 +37,7 @@ on:
     secrets:
       FTP_CREDENTIALS:
         required: true
-        description: |
-          Json contendo as credenciais do Azure. para obter essa credencial, rode no azure o comando abaixo:
-          az ad sp create-for-rbac --name "github-actions" --role contributor --scopes /subscriptions/#subscriptionId#
-          O Azure vai retornar um Json semelhante ao abaixo
-          {
-            "appId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeffffff",
-            "displayName": "github-actions",
-            "password": "#Password+Secreta*Gerada+Automaticamente!",
-            "tenant": "ffffffff-eeee-dddd-cccc-bbbbbbaaaaaa"
-          }
-          Você precisa converter o Json retornado acima em algo conforme o json abaixo:
-          {
-            "clientId": "appId",
-            "clientSecret": "password",
-            "subscriptionId": "#subscriptionId#",
-            "tenantId": "tenant"
-          }
+        description: Senha do SFTP
 
 
 jobs:
