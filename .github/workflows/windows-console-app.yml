@@ -75,8 +75,8 @@ jobs:
       - name: Build And Publish ${{ inputs.RootPath }} / ${{ inputs.Configuration }} in ${{ inputs.OutPath }}
         shell: powershell
         run: |
-          dotnet publish "${{ inputs.RootPath }}" --configuration ${{ inputs.Configuration }} --output ${{ inputs.OutPath }}
-          Del ${{ inputs.OutPath }}\appsettings.json
+          dotnet publish "${{ inputs.RootPath }}" --configuration "${{ inputs.Configuration }}" --output "${{ inputs.OutPath }}"
+          Del ${{ inputs.OutPath }}/appsettings.json
 
       - name: Creating Package upload\${{ inputs.Project }}.SyncDataApp.zip
         shell: powershell
