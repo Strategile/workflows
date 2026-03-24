@@ -22,6 +22,11 @@ on:
         type: string
         default: "Default"
         description: "Nome da Chave de ConnectionString (Necessário para a criação da chave de connectionString no Azure)"
+      DotNetVersion:
+        required: false
+        type: string
+        default: "10.0"
+        description: "Versão do Runtime do net para criação da Azure Function ('8.0' ou '10.0')"
     secrets:
       ConnectionStringValue:
         required: true
@@ -89,6 +94,7 @@ jobs:
       env:
         TF_VAR_Project: ${{ inputs.Project }}
         TF_VAR_AppEnv: ${{ inputs.AppEnv }}
+        TF_VAR_DotNetVersion: ${{ inputs.DotNetVersion }}
         TF_VAR_ConnectionStringType: ${{ inputs.ConnectionStringType }}
         TF_VAR_ConnectionStringName: ${{ inputs.ConnectionStringName }}
         TF_VAR_ConnectionStringValue: ${{ secrets.ConnectionStringValue }}
