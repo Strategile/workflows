@@ -78,14 +78,6 @@ jobs:
           include: ${{ inputs.RootPath }}/${{ inputs.IncludeFileToReplace }}
           regex: false
 
-      - name: Find '#{CACHE_VERSION}' in '${{ inputs.RootPath }}/wwwroot/*.*' and Replace to '${{ github.run_id }}'
-        uses: jacobtomlinson/gha-find-replace@v3
-        with:
-          find: "#{CACHE_VERSION}"
-          replace: ${{ github.run_id }}
-          include: ${{ inputs.RootPath }}/wwwroot/*.*
-          regex: false
-
       - name: Find '#{APPENV}' in '${{ inputs.RootPath }}/wwwroot/manifest.webmanifest' and Replace to '${{ env.SufixAppName }}'
         uses: jacobtomlinson/gha-find-replace@v3
         with:
