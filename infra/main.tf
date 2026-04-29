@@ -8,14 +8,10 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    # ⚠️ ATENÇÃO: NÃO definir valores fixos aqui no Backend.
-    # ⚠️ Configurado dinamicamente via CLI (terraform init -backend-config) no arquivo .github/workflows/azure-terraform-iac.yml
-    # resource_group_name  = "RG-Terraform-State"
-    # storage_account_name = "gh4ctions7erraform5tate"
-    # container_name       = "terraform-state"
-    # key                  = "infra.tfstate"
-  }
+# ⚠️ ATENÇÃO: NÃO definir valores fixos aqui no Backend.
+  backend "azurerm" { }
+# ⚠️ Configurado dinamicamente via CLI (terraform init -backend-config) no arquivo .github/workflows/azure-terraform-iac.yml
+
 }
 
 provider "azurerm" {
