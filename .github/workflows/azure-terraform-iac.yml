@@ -103,7 +103,12 @@ jobs:
 
     - name: Terraform Init Upgrade (${{ inputs.AppEnv }})
       working-directory: infra
-      run: terraform init -upgrade -backend-config="resource_group_name=${{ inputs.TF_ResourceGroupName }}" -backend-config="storage_account_name=${{ inputs.TF_StorageAccountName }}" -backend-config="container_name=${{ inputs.TF_ContainerName }}" -backend-config="key=infra.tfstate"
+      run: |
+        terraform init -upgrade \
+          -backend-config="resource_group_name=${{ inputs.TF_ResourceGroupName }}" \
+          -backend-config="storage_account_name=${{ inputs.TF_StorageAccountName }}" \
+          -backend-config="container_name=${{ inputs.TF_ContainerName }}" \
+          -backend-config="key=infra.tfstate"
 
     - name: Terraform Workspace (${{ inputs.Project }}-${{ inputs.AppEnv }})
       working-directory: infra
