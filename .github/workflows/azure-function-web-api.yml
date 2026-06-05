@@ -71,29 +71,29 @@ jobs:
       RESOURCE_NAME: "${{ inputs.Project }}-${{ inputs.AppEnv }}"
     
     steps:
-      - name: Checkout GitHub Action v6
+      - name: Actions Checkout v6
         uses: actions/checkout@v6
         with:
           submodules: true
 
-      - name: Setup .NET Core ${{ inputs.DotNetVersion }}
+      - name: Actions Setup Dotnet v5 with DotNet Version ${{ inputs.DotNetVersion }}
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ inputs.DotNetVersion }}
 
-      - name: Restore ${{ inputs.RootPath }}
+      - name: DotNet Restore ${{ inputs.RootPath }}
         run: dotnet restore "${{ inputs.RootPath }}"
 
-      - name: Build And Publish ${{ inputs.RootPath }} / ${{ inputs.Configuration }} in ${{ inputs.OutPath }}
+      - name: DotNet Build And Publish ${{ inputs.RootPath }} / ${{ inputs.Configuration }} in ${{ inputs.OutPath }}
         run: dotnet build "${{ inputs.RootPath }}" --configuration ${{ inputs.Configuration }} --output ${{ inputs.OutPath }}
 
-      - name: Azure Login
+      - name: Azure Login v3
         uses: azure/login@v3
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: Deploy to Azure Function App ${{ inputs.Project }} @ ${{ inputs.AppEnv }} from ${{ inputs.OutPath }}
-        uses: Azure/functions-action@v1
+        uses: azure/functions-action@v1
         with:
           app-name: ${{ env.RESOURCE_NAME }}
           slot-name: ${{ inputs.FunctionSlot }}
