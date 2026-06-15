@@ -27,6 +27,16 @@ on:
         type: string
         default: "10.0"
         description: "Versão do Runtime do net para criação da Azure Function ('8.0' ou '10.0')"
+      CreateResourceACS:
+        required: false
+        type: boolean
+        default: false
+        description: "Cria os recursos de e-mail/ACS. Default false; o chamador passa true para habilitar."
+      CustomDomain:
+        required: false
+        type: string
+        default: ""
+        description: "Domínio próprio para envio (ex.: tantagrana.com.br). Vazio ou < 4 caracteres = só o domínio gerenciado do Azure."
       TF_ResourceGroupName:
         required: false
         type: string
@@ -122,7 +132,6 @@ jobs:
 
     - name: Terraform Plan (${{ inputs.AppEnv }})
       working-directory: infra
-      run: terraform plan -out main.tfplan
       env:
         TF_VAR_Project: ${{ inputs.Project }}
         TF_VAR_AppEnv: ${{ inputs.AppEnv }}
@@ -130,6 +139,9 @@ jobs:
         TF_VAR_ConnectionStringType: ${{ inputs.ConnectionStringType }}
         TF_VAR_ConnectionStringName: ${{ inputs.ConnectionStringName }}
         TF_VAR_ConnectionStringValue: ${{ secrets.ConnectionStringValue }}
+        TF_VAR_CreateResourceACS: ${{ inputs.CreateResourceACS }}
+        TF_VAR_CustomDomain: ${{ inputs.CustomDomain }}
+      run: terraform plan -out main.tfplan
 
     - name: Terraform Apply (${{ inputs.AppEnv }})
       working-directory: infra
