@@ -66,21 +66,22 @@ variable "ConnectionStringValue" {
 
 variable "CreateResourceACS" {
   type        = bool
-  description = "Indica se serão criados os recursos de e-mail (Azure Communication Services). Quando null (default), cria apenas para Project == 'TantaGrana', para não impor ACS aos demais projetos desta IaC compartilhada. Passe true/false para forçar."
-  default     = null
+  description = "Indica se serão criados os recursos de e-mail (Azure Communication Services). Opt-in: o chamador passa true para habilitar."
+  default     = false
 }
 
 variable "CustomDomain" {
   type        = string
-  description = "Domínio próprio para envio (ex.: tantagrana.com.br). Se null, usa apenas o domínio gerenciado do Azure (DoNotReply@<guid>.azurecomm.net)."
-  default     = null
+  description = "Domínio próprio para envio (ex.: tantagrana.com.br). Vazio ou com menos de 4 caracteres = usa apenas o domínio gerenciado do Azure (DoNotReply@<guid>.azurecomm.net)."
+  default     = ""
 }
 
 
 
 locals {
   CreateResourceLP  = (var.CreateResourceLP != null) ? var.CreateResourceLP : var.AppEnv == "PRD"
-  CreateResourceACS = (var.CreateResourceACS != null) ? var.CreateResourceACS : var.Project == "TantaGrana"
+  CreateResourceACS = var.CreateResourceACS
+  CreateCustomDomain= local.CreateResourceACS && var.CustomDomain != null && length(var.CustomDomain) >= 4
   prefix            = "${var.Project}-${var.AppEnv}"
   resource_group    = "RG-${local.prefix}"
   communication     = "${local.prefix}"
@@ -148,8 +149,8 @@ resource "azurerm_communication_service_email_domain_association" "managed" {
 
 
 resource "azurerm_email_communication_service_domain" "custom" {
-  # Domínio próprio (opcional): criado só quando CustomDomain != null. Após o apply, publicar os verification_records (TXT/SPF/DKIM) no DNS e verificar no portal.
-  count                      = (local.CreateResourceACS && var.CustomDomain != null) ? 1 : 0
+  # Domínio próprio (opcional): criado só quando CustomDomain tem >= 4 caracteres. Após o apply, publicar os verification_records (TXT/SPF/DKIM) no DNS e verificar no portal.
+  count                      = local.CreateCustomDomain ? 1 : 0
 
   name                       = var.CustomDomain
   domain_management          = "CustomerManaged"
@@ -159,7 +160,7 @@ resource "azurerm_email_communication_service_domain" "custom" {
 
 
 resource "azurerm_communication_service_email_domain_association" "custom" {
-  count                      = (local.CreateResourceACS && var.CustomDomain != null) ? 1 : 0
+  count                      = local.CreateCustomDomain ? 1 : 0
 
   communication_service_id   = azurerm_communication_service.main[0].id
   email_service_domain_id    = azurerm_email_communication_service_domain.custom[0].id
@@ -305,6 +306,6 @@ output "acs_managed_sender_domain" {
 }
 
 output "acs_custom_domain_dns_records" {
-  description = "Registros DNS (TXT/SPF/DKIM) a publicar para verificar o domínio próprio (quando CustomDomain definido)."
+  description = "Registros DNS (TXT/SPF/DKIM) a publicar para verificar o domínio próprio (quando CustomDomain tem >= 4 caracteres)."
   value       = one(azurerm_email_communication_service_domain.custom[*].verification_records)
 }
