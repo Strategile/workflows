@@ -19,7 +19,15 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features { }
+
+  resource_providers_to_register = [
+    "Microsoft.Communication",       # ACS (era o que faltava)
+    "Microsoft.Web",                 # Static Web Apps, Service Plan, Function App
+    "Microsoft.Storage",             # Storage Account / Container
+    "Microsoft.OperationalInsights", # Log Analytics
+    "Microsoft.Insights",            # Application Insights
+  ]
 }
 
 
