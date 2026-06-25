@@ -37,6 +37,11 @@ on:
         type: string
         default: ""
         description: "Domínio próprio para envio (ex.: tantagrana.com.br). Vazio ou < 4 caracteres = só o domínio gerenciado do Azure."
+      CustomDomainVerified:
+        required: false
+        type: boolean
+        default: false
+        description: "true SÓ após verificar o domínio próprio no Azure (DNS publicado). Cria o link domínio<->ACS, que falha enquanto não verificado."
       TF_ResourceGroupName:
         required: false
         type: string
@@ -141,6 +146,7 @@ jobs:
         TF_VAR_ConnectionStringValue: ${{ secrets.ConnectionStringValue }}
         TF_VAR_CreateResourceACS: ${{ inputs.CreateResourceACS }}
         TF_VAR_CustomDomain: ${{ inputs.CustomDomain }}
+        TF_VAR_CustomDomainVerified: ${{ inputs.CustomDomainVerified }}
       run: terraform plan -out main.tfplan
 
     - name: Terraform Apply (${{ inputs.AppEnv }})
