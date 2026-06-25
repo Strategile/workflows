@@ -84,12 +84,18 @@ variable "CustomDomain" {
   default     = ""
 }
 
+variable "CustomDomainVerified" {       # nova flag, default false
+  type    = bool
+  default = false
+}
+
 
 
 locals {
   CreateResourceLP  = (var.CreateResourceLP != null) ? var.CreateResourceLP : var.AppEnv == "PRD"
   CreateResourceACS = var.CreateResourceACS
   CreateCustomDomain= local.CreateResourceACS && var.CustomDomain != null && length(var.CustomDomain) >= 4
+  LinkCustomDomain  = local.CreateCustomDomain && var.CustomDomainVerified
   prefix            = "${var.Project}-${var.AppEnv}"
   resource_group    = "RG-${local.prefix}"
   communication     = "${local.prefix}"
@@ -168,7 +174,7 @@ resource "azurerm_email_communication_service_domain" "custom" {
 
 
 resource "azurerm_communication_service_email_domain_association" "custom" {
-  count                      = local.CreateCustomDomain ? 1 : 0
+  count                      = local.LinkCustomDomain ? 1 : 0
 
   communication_service_id   = azurerm_communication_service.main[0].id
   email_service_domain_id    = azurerm_email_communication_service_domain.custom[0].id
