@@ -182,6 +182,16 @@ resource "azurerm_communication_service_email_domain_association" "custom" {
 
 
 
+resource "azurerm_email_communication_service_domain_sender_username" "noreply" {
+  count                      = local.CreateCustomDomain ? 1 : 0
+
+  name                       = "noreply"
+  email_service_domain_id    = azurerm_email_communication_service_domain.custom[0].id
+  display_name               = var.Project
+}
+
+
+
 resource "azurerm_static_web_app" "landing_page" {
   count                      = local.CreateResourceLP ? 1 : 0
 
